@@ -1,0 +1,10 @@
+FROM golang:latest
+
+WORKDIR /app
+
+COPY ./core ./core
+COPY ./api ./api
+
+RUN cd ./api && go mod vendor && go build -o  main
+
+CMD ["api/main"]

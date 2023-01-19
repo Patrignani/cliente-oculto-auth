@@ -22,7 +22,7 @@ func (a *AuthenticateService) ClientCredentialsAuthorization(client *oauth.OAuth
 		Authorization.Authorized = false
 	}
 
-	Authorization.Authorized = clientAuth != nil && len(clientAuth.Id) > 0
+	Authorization.Authorized = clientAuth != nil && len(clientAuth.ID) > 0
 
 	return *Authorization
 }
