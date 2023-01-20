@@ -7,5 +7,5 @@ import (
 
 type IClientRepository interface {
 	Insert(client entity.Client) error
-	FindBySpecification(specification specifications.ISpecification) (*entity.Client, error)
+	FindOneBySpecification(specification specifications.ISpecification) (*entity.Client, error)
 }

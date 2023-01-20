@@ -17,5 +17,5 @@ func NewClientService(repository repository.IClientRepository) interfaces.IClien
 
 func (c *ClientService) Authenticate(clientId string, clientSecret string) (*entity.Client, error) {
 	specification := specifications.NewFindClientByClientIdAndClientSecret(clientId, clientSecret, map[string]int{"_id": 1})
-	return c.repository.FindBySpecification(specification)
+	return c.repository.FindOneBySpecification(specification)
 }

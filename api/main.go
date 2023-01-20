@@ -2,7 +2,9 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
+	common "github.com/Patrignani/cliente-oculto-auth/core/config"
 	"github.com/Patrignani/cliente-oculto-auth/core/facades"
 	oauth "github.com/Patrignani/simple-oauth"
 	"github.com/labstack/echo/v4"
@@ -11,10 +13,23 @@ import (
 func main() {
 	authFacade := facades.CreateFacade()
 
+	expireTimeMinutesClient, err := strconv.Atoi(common.JwtExpireTimeMinutesClient)
+
+	if err != nil {
+		panic(err)
+	}
+
+	expireTimeMinutes, err := strconv.Atoi(common.JwtExpireTimeMinutes)
+
+	if err != nil {
+		panic(err)
+	}
+
 	options := &oauth.OAuthSimpleOption{
-		Key:               "teste",
-		ExpireTimeMinutes: 10,
-		AuthRouter:        "/Auth",
+		Key:                     common.JwtKey,
+		ExpireTimeMinutesClient: expireTimeMinutesClient,
+		ExpireTimeMinutes:       expireTimeMinutes,
+		AuthRouter:              common.AuthRouter,
 	}
 
 	authConfigure := &oauth.OAuthConfigure{

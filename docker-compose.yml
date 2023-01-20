@@ -8,5 +8,20 @@ services:
     ports:
       - "8000:8000"
     environment:
-      MONGO_URI: mongodb://admin:admin@mongodb:27017/cliente-oculto-auth
+      MONGODB_USER: clienteOcultoAuthAdmin
+      MONGODB_PASSWORD: f0cd47b4b7364a7e9b87e1a377b7dddf
+      MONGODB_HOST: mongodb-auth
+      MONGODB_PORT: 27017
+      MONGODB: cliente-oculto-auth
+      MONGODB_AUTH: SCRAM-SHA-1
+      MONGODB_REPLICASET:  
+      AUTH_ROUTER: /Auth
+      JWT_EXPIRE_CLIENT: 2
+      JWT_EXPIRE: 20
+      JWT_KEY: 654d30eae2f0496295a2e161e644b31e-06e01c70dd88480c8e07e5e89c1668da-89ddd1301a624dcda4f2da8abc1190f8
+    networks:
+      - auth-network
     restart: always
+networks:
+  auth-network:
+  

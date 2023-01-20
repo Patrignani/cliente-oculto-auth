@@ -3,7 +3,7 @@ module github.com/Patrignani/cliente-oculto-auth/core
 go 1.19
 
 require (
-	github.com/Patrignani/simple-oauth v1.0.2
+	github.com/Patrignani/simple-oauth v1.0.7
 	go.mongodb.org/mongo-driver v1.11.1
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 )

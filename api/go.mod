@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/Patrignani/cliente-oculto-auth/core v0.0.0
-	github.com/Patrignani/simple-oauth v1.0.2
+	github.com/Patrignani/simple-oauth v1.0.7
 	github.com/labstack/echo/v4 v4.10.0
 )
 

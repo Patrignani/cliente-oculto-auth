@@ -34,14 +34,14 @@ func (c *ClientRepository) Insert(client entity.Client) error {
 	return nil
 }
 
-func (u *ClientRepository) FindBySpecification(specification specifications.ISpecification) (*entity.Client, error) {
+func (u *ClientRepository) FindOneBySpecification(specification specifications.ISpecification) (*entity.Client, error) {
 	filter, opts := specification.GetSpecification()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
 	var client entity.Client
-	if mgoErr := u.context.Find(ctx, ClientCollection, filter, &client, opts); mgoErr != nil {
+	if mgoErr := u.context.FindOne(ctx, ClientCollection, filter, &client, opts); mgoErr != nil {
 		return nil, mgoErr
 	}
 
