@@ -39,7 +39,7 @@ func (c *ClientRepository) Insert(client *entity.Client) error {
 func (u *ClientRepository) FindOneBySpecification(specification specifications.ISpecificationByOne) (*entity.Client, error) {
 	filter, opts := specification.GetSpecification()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	var client entity.Client
