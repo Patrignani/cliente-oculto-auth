@@ -15,6 +15,8 @@ import (
 
 type AuthFacade struct {
 	ClientService       interfaces.IClientService
+	UserService         interfaces.IUserService
+	RefreshTokenService interfaces.IRefreshTokenSerice
 	AuthenticateService interfaces.IAuthenticateService
 }
 
@@ -23,16 +25,16 @@ func CreateFacade() *AuthFacade {
 
 	//repo
 	clientRepository := repository.NewClientRepository(mongoContext)
+	userRepository := repository.NewUserRepository(mongoContext)
+	refreshTokenRepository := repository.NewRefreshTokenRepository(mongoContext)
 
 	//services
 	clientService := services.NewClientService(clientRepository)
-	authServices := services.NewAuthenticateService(clientService)
+	userService := services.NewUserService(userRepository)
+	refreshTokenService := services.NewRefreshTokenService(refreshTokenRepository)
+	authServices := services.NewAuthenticateService(clientService, userService, refreshTokenService)
 
-	return NewAuthFacade(clientService, authServices)
-}
-
-func NewAuthFacade(client interfaces.IClientService, authenticate interfaces.IAuthenticateService) *AuthFacade {
-	return &AuthFacade{client, authenticate}
+	return &AuthFacade{clientService, userService, refreshTokenService, authServices}
 }
 
 func getMongoContext() data.IMongoContext {

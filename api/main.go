@@ -33,7 +33,9 @@ func main() {
 	}
 
 	authConfigure := &oauth.OAuthConfigure{
-		ClientCredentialsAuthorization: authFacade.AuthenticateService.ClientCredentialsAuthorization,
+		ClientCredentialsAuthorization:       authFacade.AuthenticateService.ClientCredentialsAuthorization,
+		PasswordAuthorization:                authFacade.AuthenticateService.PasswordAuthorization,
+		RefreshTokenCredentialsAuthorization: authFacade.AuthenticateService.RefreshTokenCredentialsAuthorization,
 	}
 
 	e := echo.New()

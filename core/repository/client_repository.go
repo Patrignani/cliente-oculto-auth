@@ -22,19 +22,21 @@ func NewClientRepository(context data.IMongoContext) interfaces.IClientRepositor
 	return &ClientRepository{context: context}
 }
 
-func (c *ClientRepository) Insert(client entity.Client) error {
+func (c *ClientRepository) Insert(client *entity.Client) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	_, err := c.context.Insert(ctx, ClientCollection, client)
+	id, err := c.context.Insert(ctx, ClientCollection, client)
 	if err != nil {
 		return err
 	}
 
+	client.ID = id
+
 	return nil
 }
 
-func (u *ClientRepository) FindOneBySpecification(specification specifications.ISpecification) (*entity.Client, error) {
+func (u *ClientRepository) FindOneBySpecification(specification specifications.ISpecificationByOne) (*entity.Client, error) {
 	filter, opts := specification.GetSpecification()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)

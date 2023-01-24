@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -59,12 +60,14 @@ func (m *MoncoContext) WithTransaction(ctx context.Context, fn func(context.Cont
 }
 
 // Insert stores documents in the collection
-func (m *MoncoContext) Insert(ctx context.Context, collName string, doc interface{}) (interface{}, error) {
+func (m *MoncoContext) Insert(ctx context.Context, collName string, doc interface{}) (string, error) {
 	insertedObject, err := m.client.Database(m.dbName).Collection(collName).InsertOne(ctx, doc)
 	if insertedObject == nil {
-		return nil, err
+		return "", err
 	}
-	return insertedObject.InsertedID, err
+
+	id := insertedObject.InsertedID.(primitive.ObjectID).Hex()
+	return id, err
 }
 
 // BulkInsert stores multiple documents in the collection
@@ -91,13 +94,19 @@ func (m *MoncoContext) Find(ctx context.Context, collName string, query map[stri
 }
 
 // FindOne finds one document in mongo
-func (m *MoncoContext) FindOne(ctx context.Context, collName string, query map[string]interface{}, doc interface{}, opts *options.FindOptions) error {
-	return m.client.Database(m.dbName).Collection(collName).FindOne(ctx, query).Decode(doc)
+func (m *MoncoContext) FindOne(ctx context.Context, collName string, query map[string]interface{}, doc interface{}, opts *options.FindOneOptions) error {
+	return m.client.Database(m.dbName).Collection(collName).FindOne(ctx, query, opts).Decode(doc)
 }
 
 // UpdateOne updates one or more documents in the collection
 func (m *MoncoContext) UpdateOne(ctx context.Context, collName string, selector map[string]interface{}, update interface{}) (*mongo.UpdateResult, error) {
 	updateResult, err := m.client.Database(m.dbName).Collection(collName).UpdateOne(ctx, selector, update)
+	return updateResult, err
+}
+
+// UpdateMany updates one or more documents in the collection
+func (m *MoncoContext) UpdateMany(ctx context.Context, collName string, selector map[string]interface{}, update interface{}) (*mongo.UpdateResult, error) {
+	updateResult, err := m.client.Database(m.dbName).Collection(collName).UpdateMany(ctx, selector, update)
 	return updateResult, err
 }
 
@@ -119,7 +128,7 @@ func (m *MoncoContext) Count(ctx context.Context, collName string, query map[str
 }
 
 func (m *MoncoContext) Disconnect() {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	_ = m.client.Disconnect(ctx)
 }
