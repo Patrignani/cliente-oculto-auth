@@ -47,7 +47,15 @@ func main() {
 	authRouter.CreateAuthRouter()
 	jwtValidate := authRouter.GetDefaultMiddleWareJwtValidate()
 
-	g := e.Group("CheckJwt")
+	e.GET("/health", func(c echo.Context) error {
+		// Execute verificações de saúde aqui
+		// Por exemplo, verificar a conexão com o banco de dados, serviços externos, etc.
+
+		// Se tudo estiver bem, responda com um status OK (200)
+		return c.String(http.StatusOK, "Health check passed")
+	})
+
+	g := e.Group("check-jwt")
 	g.Use(jwtValidate)
 	g.GET("", func(c echo.Context) error {
 		get := c.Get("user")
