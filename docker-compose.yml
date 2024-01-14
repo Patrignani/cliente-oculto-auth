@@ -15,7 +15,7 @@ services:
       MONGODB: cliente-oculto-auth
       MONGODB_AUTH: SCRAM-SHA-1
       MONGODB_REPLICASET:  
-      AUTH_ROUTER: /Auth
+      AUTH_ROUTER: /auth
       REFRESH_EXPIRE: 600
       JWT_EXPIRE_CLIENT: 2
       JWT_EXPIRE: 20
