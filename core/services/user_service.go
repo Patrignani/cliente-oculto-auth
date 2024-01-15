@@ -7,7 +7,6 @@ import (
 	repository "github.com/Patrignani/cliente-oculto-auth/core/repository/interfaces"
 	"github.com/Patrignani/cliente-oculto-auth/core/repository/specifications"
 	"github.com/Patrignani/cliente-oculto-auth/core/services/interfaces"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -34,13 +33,13 @@ func (c *UserService) Authenticate(username string, password string) (*entity.Us
 	}
 
 	password += user.Seed
-	passwordToCheck := []byte(password)
+	// passwordToCheck := []byte(password)
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), passwordToCheck)
+	// err = bcrypt.CompareHashAndPassword([]byte(user.Password), passwordToCheck)
 
-	if err != nil {
-		err = errors.New(msgError)
-	}
+	// if err != nil {
+	// 	err = errors.New(msgError)
+	// }
 
 	return user, err
 }

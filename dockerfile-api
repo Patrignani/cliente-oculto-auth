@@ -1,10 +1,20 @@
-FROM golang:latest
+# Stage 1: Compilar o código
+FROM golang:alpine AS builder
 
 WORKDIR /app
 
 COPY ./core ./core
 COPY ./api ./api
 
-RUN cd ./api && go mod vendor && go build -o  main
+# Utilize -ldflags para otimizar o tamanho do binário
+RUN export GO111MODULE=on && cd ./api && go mod vendor && go build -ldflags="-s -w" -o main
 
-CMD ["api/main"]
+# Stage 2: Criar uma imagem menor para a produção
+FROM alpine
+
+WORKDIR /app
+
+# Copie apenas o executável compilado da Stage 1
+COPY --from=builder /app/api/main ./api/main
+
+CMD ["./api/main"]

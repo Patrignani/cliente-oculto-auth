@@ -8,7 +8,7 @@ import (
 	common "github.com/Patrignani/cliente-oculto-auth/core/config"
 	"github.com/Patrignani/cliente-oculto-auth/core/facades"
 	oauth "github.com/Patrignani/simple-oauth"
-	t "github.com/golang-jwt/jwt"
+	t "github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -38,6 +38,7 @@ func main() {
 		ClientCredentialsAuthorization:       authFacade.AuthenticateService.ClientCredentialsAuthorization,
 		PasswordAuthorization:                authFacade.AuthenticateService.PasswordAuthorization,
 		RefreshTokenCredentialsAuthorization: authFacade.AuthenticateService.RefreshTokenCredentialsAuthorization,
+		CustomActionRolesMiddleware:          customActionRolesMiddleware,
 	}
 
 	e := echo.New()
@@ -45,6 +46,7 @@ func main() {
 	authRouter := oauth.NewAuthorization(authConfigure, options, e)
 
 	authRouter.CreateAuthRouter()
+
 	jwtValidate := authRouter.GetDefaultMiddleWareJwtValidate()
 
 	e.GET("/health", func(c echo.Context) error {
@@ -58,7 +60,12 @@ func main() {
 	g := e.Group("check-jwt")
 	g.Use(jwtValidate)
 	g.GET("", func(c echo.Context) error {
+		id := c.Get("user-id")
+		cid := c.Get("cid")
 		get := c.Get("user")
+
+		println(cid, id)
+
 		user := get.(*t.Token)
 		claims := user.Claims.(t.MapClaims)
 		roles := claims["roles"].([]interface{})
@@ -74,9 +81,21 @@ func main() {
 		// 	permissionsStr = append(permissionsStr, permission.(string))
 		// }
 
-		ID := claims["sub"].(string)
+		ID := claims["user-id"].(string)
 		return c.String(http.StatusOK, "Id:"+ID+" roles:"+strings.Join(rolesStr, ",")+" permissions:"+strings.Join(permissionsStr, ","))
-	}, authRouter.PermissionAndRoleMiddleware("1,2", "5,6,1"))
+	}, authRouter.RolesMiddleware("10", "5"))
 
 	e.Logger.Fatal(e.Start(":8000"))
+}
+
+func customActionRolesMiddleware(c echo.Context, token *t.Token, claims t.MapClaims) error {
+	if claims["user-id"] != nil {
+		c.Set("user-id", claims["user-id"].(string))
+	}
+
+	if claims["cid"] != nil {
+		c.Set("cid", claims["cid"].(string))
+	}
+
+	return nil
 }

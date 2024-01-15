@@ -52,9 +52,12 @@ func (a *AuthenticateService) PasswordAuthorization(pass *oauth.OAuthPassword) o
 
 			authorization.Authorized = true
 			authorization.Subject = user.ID
-			authorization.Permissions = user.Permissions
 			authorization.Roles = user.Roles
 			authorization.RefreshToken = refresh.ID
+			authorization.Claims = map[string]string{
+				"user-id": user.ID,
+				"cid":     clientAuth.ID,
+			}
 		}
 	}
 
@@ -89,9 +92,12 @@ func (a *AuthenticateService) RefreshTokenCredentialsAuthorization(refresh *oaut
 
 				authorization.Authorized = true
 				authorization.Subject = user.ID
-				authorization.Permissions = user.Permissions
 				authorization.Roles = user.Roles
 				authorization.RefreshToken = refresh.ID
+				authorization.Claims = map[string]string{
+					"user-id": user.ID,
+					"cid":     clientAuth.ID,
+				}
 			}
 		}
 	}
